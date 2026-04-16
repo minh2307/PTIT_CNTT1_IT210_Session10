@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="siteHeader" class="shadow-sm">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand fw-bold" th:href="@{/}">IT Lab Portal</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/}">Trang chủ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/devices}">Thiết bị</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/lab-rooms}">Phòng Lab</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/borrow-form}">Đăng ký mượn</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/devices}">Admin Thiết bị</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/requests}">Admin Yêu cầu</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+</body>
+</html>

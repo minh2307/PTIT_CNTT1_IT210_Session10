@@ -1,0 +1,29 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.hero-section {
+    background: linear-gradient(to right, #eef4ff, #f8fbff);
+}
+
+.fixed-image {
+    height: 220px;
+    object-fit: cover;
+}
+
+.card {
+    border-radius: 16px;
+}
+
+.card-img-top {
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+}
+
+.navbar-brand {
+    letter-spacing: 0.3px;
+}
+
+footer p {
+    margin-bottom: 0;
+}
