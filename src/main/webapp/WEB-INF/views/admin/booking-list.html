@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}">
+    <title>Quản lý yêu cầu</title>
+</head>
+<body>
+    <div th:replace="~{fragments/header :: navbar}"></div>
+    
+    <div class="container mt-4">
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-list"></i> Quản lý yêu cầu</h2>
+            <div>
+                <a th:href="@{/admin}" class="btn btn-secondary me-2">
+                    <i class="fas fa-arrow-left"></i> Dashboard
+                </a>
+                <a th:href="@{/admin/bookings/pending}" class="btn btn-warning">
+                    <i class="fas fa-clock"></i> Yêu cầu đang chờ
+                </a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div th:if="${#lists.isEmpty(bookings)}" class="text-center py-5">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">Không có yêu cầu nào</h4>
+                    <p class="text-muted">Chưa có yêu cầu nào trong hệ thống.</p>
+                </div>
+                
+                <div th:if="${!#lists.isEmpty(bookings)}">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Sinh viên</th>
+                                    <th>Mã SV</th>
+                                    <th>Email</th>
+                                    <th>Loại</th>
+                                    <th>Số lượng</th>
+                                    <th>Ngày nhận</th>
+                                    <th>Ngày trả</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="booking : ${bookings}">
+                                    <td th:text="${booking.id}">1</td>
+                                    <td th:text="${booking.studentName}">Tên SV</td>
+                                    <td th:text="${booking.studentCode}">Mã SV</td>
+                                    <td th:text="${booking.email}">Email</td>
+                                    <td>
+                                        <span th:if="${booking.itemType == 'EQUIPMENT'}" class="badge bg-primary">
+                                            <i class="fas fa-desktop"></i> Thiết bị
+                                        </span>
+                                        <span th:if="${booking.itemType == 'LAB_ROOM'}" class="badge bg-success">
+                                            <i class="fas fa-door-open"></i> Phòng Lab
+                                        </span>
+                                    </td>
+                                    <td th:text="${booking.quantity}">1</td>
+                                    <td th:text="${#temporals.format(booking.borrowDate, 'dd/MM/yyyy')}">01/01/2024</td>
+                                    <td th:text="${#temporals.format(booking.returnDate, 'dd/MM/yyyy')}">02/01/2024</td>
+                                    <td>
+                                        <span th:if="${booking.status == 'PENDING'}" class="badge bg-warning">
+                                            <i class="fas fa-clock"></i> Đang chờ
+                                        </span>
+                                        <span th:if="${booking.status == 'APPROVED'}" class="badge bg-success">
+                                            <i class="fas fa-check"></i> Đã duyệt
+                                        </span>
+                                        <span th:if="${booking.status == 'REJECTED'}" class="badge bg-danger">
+                                            <i class="fas fa-times"></i> Đã từ chối
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div th:if="${booking.status == 'PENDING'}" class="btn-group" role="group">
+                                            <a th:href="@{/admin/bookings/approve/{id}(id=${booking.id})}" 
+                                               class="btn btn-sm btn-success"
+                                               title="Phê duyệt"
+                                               onclick="return confirm('Bạn có chắc muốn phê duyệt yêu cầu này?')">
+                                                <i class="fas fa-check"></i>
+                                            </a>
+                                            <a th:href="@{/admin/bookings/reject/{id}(id=${booking.id})}" 
+                                               class="btn btn-sm btn-danger"
+                                               title="Từ chối"
+                                               onclick="return confirm('Bạn có chắc muốn từ chối yêu cầu này?')">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        </div>
+                                        <span th:unless="${booking.status == 'PENDING'}" class="text-muted">
+                                            <i class="fas fa-check-circle"></i> Đã xử lý
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

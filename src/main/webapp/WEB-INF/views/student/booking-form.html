@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}">
+    <title>Đăng ký mượn</title>
+</head>
+<body>
+    <div th:replace="~{fragments/header :: navbar}"></div>
+    
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-edit"></i> 
+                            <span th:if="${equipment}">Đăng ký mượn thiết bị: <span th:text="${equipment.name}"></span></span>
+                            <span th:if="${labRoom}">Đăng ký sử dụng phòng lab: <span th:text="${labRoom.name}"></span></span>
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/student/booking}" th:object="${booking}" method="post" novalidate>
+                            <!-- Hidden fields -->
+                            <input type="hidden" th:field="*{id}" />
+                            <input type="hidden" th:field="*{equipmentId}" />
+                            <input type="hidden" th:field="*{labRoomId}" />
+                            <input type="hidden" th:field="*{itemType}" />
+                            <input type="hidden" th:field="*{bookingDate}" />
+                            <input type="hidden" th:field="*{status}" />
+                            
+                            <!-- Item Information -->
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle"></i>
+                                        <strong>Thông tin:</strong>
+                                        <span th:if="${equipment}" th:text="${equipment.name + ' - ' + equipment.description}"></span>
+                                        <span th:if="${labRoom}" th:text="${labRoom.name + ' - ' + labRoom.description}"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Student Information -->
+                            <h5 class="mb-3"><i class="fas fa-user"></i> Thông tin sinh viên</h5>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="studentName" class="form-label">Họ và tên sinh viên <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" th:field="*{studentName}" id="studentName" placeholder="Nguyễn Văn A">
+                                    <div class="text-danger small" th:if="${#fields.hasErrors('studentName')}" th:errors="*{studentName}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="studentCode" class="form-label">Mã sinh viên <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" th:field="*{studentCode}" id="studentCode" placeholder="B123456">
+                                    <div class="text-danger small" th:if="${#fields.hasErrors('studentCode')}" th:errors="*{studentCode}"></div>
+                                    <div class="form-text">Ví dụ: B123456 (2 chữ cái + 6 chữ số)</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="email" class="form-label">Email liên hệ <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" th:field="*{email}" id="email" placeholder="sinhvien@ptit.edu.vn">
+                                    <div class="text-danger small" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Booking Information -->
+                            <h5 class="mb-3"><i class="fas fa-calendar"></i> Thông tin đăng ký</h5>
+                            
+                            <div class="row mb-3" th:if="${equipment}">
+                                <div class="col-md-4">
+                                    <label for="quantity" class="form-label">Số lượng muốn mượn <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" th:field="*{quantity}" id="quantity" min="1" th:max="${equipment.availableQuantity}">
+                                    <div class="text-danger small" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"></div>
+                                    <div class="form-text">Tồn kho: <span th:text="${equipment.availableQuantity}"></span></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="borrowDate" class="form-label">Ngày dự kiến nhận <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" th:field="*{borrowDate}" id="borrowDate">
+                                    <div class="text-danger small" th:if="${#fields.hasErrors('borrowDate')}" th:errors="*{borrowDate}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="returnDate" class="form-label">Ngày dự kiến trả <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" th:field="*{returnDate}" id="returnDate">
+                                    <div class="text-danger small" th:if="${#fields.hasErrors('returnDate')}" th:errors="*{returnDate}"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="reason" class="form-label">Lý do mượn <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" th:field="*{reason}" id="reason" rows="3" placeholder="Nhập lý do mượn thiết bị/sử dụng phòng lab..."></textarea>
+                                    <div class="text-danger small" th:if="${#fields.hasErrors('reason')}" th:errors="*{reason}"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Global errors -->
+                            <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle"></i> Vui lòng sửa các lỗi dưới đây:
+                                <ul class="mb-0 mt-2">
+                                    <li th:each="error : ${#fields.detailedErrors('*')}" th:text="${error.message}"></li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Success message -->
+                            <div th:if="${successMessage}" class="alert alert-success">
+                                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+                            </div>
+                            
+                            <!-- Form actions -->
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/student}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Quay lại
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane"></i> Gửi đăng ký
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    
+    <script>
+        // Set minimum date to today
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            const borrowDateInput = document.getElementById('borrowDate');
+            const returnDateInput = document.getElementById('returnDate');
+            
+            if (borrowDateInput) {
+                borrowDateInput.setAttribute('min', today);
+            }
+            if (returnDateInput) {
+                returnDateInput.setAttribute('min', today);
+            }
+            
+            // Ensure return date is after borrow date
+            if (borrowDateInput) {
+                borrowDateInput.addEventListener('change', function() {
+                    if (returnDateInput) {
+                        returnDateInput.setAttribute('min', this.value);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -3,10 +3,15 @@ package com.example.ss10.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
+
+import jakarta.servlet.MultipartConfigElement;
 
 @Configuration
 @EnableWebMvc
@@ -40,5 +45,24 @@ public class AppConfig {
         resolver.setTemplateEngine(templateEngine());
         resolver.setCharacterEncoding("UTF-8");
         return resolver;
+    }
+
+    // 4. Bean LocalValidatorFactoryBean - cấu hình Hibernate Validator
+    @Bean
+    public LocalValidatorFactoryBean validator() {
+        return new LocalValidatorFactoryBean();
+    }
+
+    // 5. Bean StandardServletMultipartResolver - cấu hình upload file
+    @Bean
+    public MultipartResolver multipartResolver() {
+        StandardServletMultipartResolver resolver = new StandardServletMultipartResolver();
+        return resolver;
+    }
+    
+    // 6. Bean MultipartConfigElement - cấu hình chi tiết cho multipart
+    @Bean
+    public MultipartConfigElement multipartConfigElement() {
+        return new MultipartConfigElement("", 10485760, 10485760, 1048576);
     }
 }

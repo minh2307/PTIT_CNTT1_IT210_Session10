@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}">
+    <title>Trang chủ</title>
+</head>
+<body>
+    <div th:replace="~{fragments/header :: navbar}"></div>
+    
+    <div class="container mt-4">
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <!-- Hero Section -->
+        <div class="jumbotron bg-primary text-white p-5 rounded mb-4">
+            <h1 class="display-4">Chào mừng đến hệ thống quản lý Lab!</h1>
+            <p class="lead">Đăng ký mượn thiết bị và phòng lab một cách dễ dàng và nhanh chóng.</p>
+            <hr class="my-4">
+            <p>Khám phá danh sách thiết bị và phòng lab có sẵn để đăng ký sử dụng.</p>
+        </div>
+        
+        <!-- Quick Stats -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-desktop fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Thiết bị</h5>
+                        <p class="card-text" th:text="${#lists.size(equipments)} + ' thiết bị'">0 thiết bị</p>
+                        <a th:href="@{/student/equipment}" class="btn btn-primary">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-door-open fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Phòng Lab</h5>
+                        <p class="card-text" th:text="${#lists.size(labRooms)} + ' phòng lab'">0 phòng lab</p>
+                        <a th:href="@{/student/lab-rooms}" class="btn btn-success">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-calendar-check fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Đăng ký nhanh</h5>
+                        <p class="card-text">Đăng ký mượn thiết bị hoặc phòng lab ngay</p>
+                        <a th:href="@{/student/equipment}" class="btn btn-warning">Bắt đầu</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Featured Items -->
+        <div class="row">
+            <div class="col-md-6">
+                <h3><i class="fas fa-star text-warning"></i> Thiết bị nổi bật</h3>
+                <div class="row">
+                    <div th:each="equipment : ${equipments}" class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <img th:src="${equipment.imageUrl}" class="card-img-top" th:alt="${equipment.name}" style="height: 150px; object-fit: cover;">
+                            <div class="card-body">
+                                <h6 class="card-title" th:text="${equipment.name}">Tên thiết bị</h6>
+                                <p class="card-text small text-muted" th:text="${equipment.description}">Mô tả</p>
+                                <span class="badge bg-success" th:text="'Còn: ' + ${equipment.availableQuantity}">Còn: 0</span>
+                            </div>
+                            <div class="card-footer">
+                                <a th:href="@{/student/booking/equipment/{id}(id=${equipment.id})}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-hand-holding"></i> Mượn
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h3><i class="fas fa-star text-warning"></i> Phòng Lab nổi bật</h3>
+                <div class="row">
+                    <div th:each="labRoom : ${labRooms}" class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <img th:src="${labRoom.imageUrl}" class="card-img-top" th:alt="${labRoom.name}" style="height: 150px; object-fit: cover;">
+                            <div class="card-body">
+                                <h6 class="card-title" th:text="${labRoom.name}">Tên phòng lab</h6>
+                                <p class="card-text small text-muted" th:text="${labRoom.description}">Mô tả</p>
+                                <span class="badge bg-info" th:text="'Sức chứa: ' + ${labRoom.capacity}">Sức chứa: 0</span>
+                            </div>
+                            <div class="card-footer">
+                                <a th:href="@{/student/booking/lab-room/{id}(id=${labRoom.id})}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-calendar"></i> Đăng ký
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

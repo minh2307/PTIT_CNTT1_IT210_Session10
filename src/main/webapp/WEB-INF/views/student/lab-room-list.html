@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}">
+    <title>Danh sách phòng Lab</title>
+</head>
+<body>
+    <div th:replace="~{fragments/header :: navbar}"></div>
+    
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-door-open"></i> Danh sách phòng Lab</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/student}">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">Phòng Lab</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="row">
+            <div th:each="labRoom : ${labRooms}" class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <img th:src="${labRoom.imageUrl}" class="card-img-top" th:alt="${labRoom.name}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title" th:text="${labRoom.name}">Tên phòng lab</h5>
+                        <p class="card-text" th:text="${labRoom.description}">Mô tả phòng lab</p>
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-info" th:text="'Sức chứa: ' + ${labRoom.capacity}">
+                                    <i class="fas fa-users"></i> Sức chứa: 0
+                                </span>
+                                <span class="text-muted small">
+                                    <i class="fas fa-door-closed"></i> Phòng thực hành
+                                </span>
+                            </div>
+                            <a th:href="@{/student/booking/lab-room/{id}(id=${labRoom.id})}" class="btn btn-success w-100">
+                                <i class="fas fa-calendar"></i> Đăng ký sử dụng
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div th:if="${#lists.isEmpty(labRooms)}" class="text-center py-5">
+            <i class="fas fa-door-closed fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">Không có phòng lab nào</h4>
+            <p class="text-muted">Hiện tại chưa có phòng lab nào trong hệ thống.</p>
+        </div>
+    </div>
+    
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}">
+    <title>Thêm/Sửa phòng Lab</title>
+</head>
+<body>
+    <div th:replace="~{fragments/header :: navbar}"></div>
+    
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-edit"></i> 
+                            <span th:if="${labRoom.id == null}">Thêm phòng Lab mới</span>
+                            <span th:unless="${labRoom.id == null}">Chỉnh sửa phòng Lab</span>
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/admin/lab-rooms/save}" th:object="${labRoom}" method="post" enctype="multipart/form-data" novalidate>
+                            <input type="hidden" th:field="*{id}" />
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="name" class="form-label">Tên phòng Lab <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" th:field="*{name}" id="name" placeholder="Phòng Lab 101">
+                                    <div class="text-danger small" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="description" class="form-label">Mô tả <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" th:field="*{description}" id="description" rows="3" placeholder="Phòng thực hành máy tính 1..."></textarea>
+                                    <div class="text-danger small" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="capacity" class="form-label">Sức chứa <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" th:field="*{capacity}" id="capacity" min="1" placeholder="30">
+                                    <div class="text-danger small" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="imageFile" class="form-label">Hình ảnh phòng Lab</label>
+                                    <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*">
+                                    <input type="hidden" th:field="*{imageUrl}" id="imageUrl">
+                                    <div class="form-text">Chọn hình ảnh từ máy tính (JPG, PNG, GIF)</div>
+                                    
+                                    <!-- Image Preview -->
+                                    <div id="imagePreview" class="mt-2" th:if="${labRoom.imageUrl}">
+                                        <img th:src="${labRoom.imageUrl}" class="img-thumbnail" style="max-width: 200px; height: 100px; object-fit: cover;" alt="Preview">
+                                        <div class="form-text">Hình ảnh hiện tại</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Form actions -->
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/admin/lab-rooms}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Quay lại
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save"></i> 
+                                    <span th:if="${labRoom.id == null}">Thêm mới</span>
+                                    <span th:unless="${labRoom.id == null}">Cập nhật</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    
+    <script>
+        // Image preview functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const imageFile = document.getElementById('imageFile');
+            const imagePreview = document.getElementById('imagePreview');
+            const imageUrl = document.getElementById('imageUrl');
+            
+            imageFile.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Create or update preview
+                        let previewDiv = document.getElementById('imagePreview');
+                        if (!previewDiv) {
+                            previewDiv = document.createElement('div');
+                            previewDiv.id = 'imagePreview';
+                            previewDiv.className = 'mt-2';
+                            imageFile.parentNode.appendChild(previewDiv);
+                        }
+                        
+                        previewDiv.innerHTML = `
+                            <img src="${e.target.result}" class="img-thumbnail" style="max-width: 200px; height: 100px; object-fit: cover;" alt="Preview">
+                            <div class="form-text">Xem trước hình ảnh mới</div>
+                        `;
+                        
+                        // Update hidden imageUrl field with filename
+                        imageUrl.value = '/uploads/' + file.name;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

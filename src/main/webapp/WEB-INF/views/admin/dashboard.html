@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}">
+    <title>Dashboard Quản lý</title>
+</head>
+<body>
+    <div th:replace="~{fragments/header :: navbar}"></div>
+    
+    <div class="container mt-4">
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-tachometer-alt"></i> Dashboard Quản lý</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/student}">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">Quản lý</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 th:text="${totalEquipments}">0</h4>
+                                <p class="mb-0">Thiết bị</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-desktop fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a th:href="@{/admin/equipment}" class="text-white text-decoration-none">
+                            <small>Chi tiết <i class="fas fa-arrow-right"></i></small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 th:text="${totalLabRooms}">0</h4>
+                                <p class="mb-0">Phòng Lab</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-door-open fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a th:href="@{/admin/lab-rooms}" class="text-white text-decoration-none">
+                            <small>Chi tiết <i class="fas fa-arrow-right"></i></small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 th:text="${#lists.size(pendingBookings)}">0</h4>
+                                <p class="mb-0">Đang chờ</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-clock fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a th:href="@{/admin/bookings/pending}" class="text-white text-decoration-none">
+                            <small>Chi tiết <i class="fas fa-arrow-right"></i></small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4>
+                                    <i class="fas fa-cog fa-spin"></i>
+                                </h4>
+                                <p class="mb-0">Hệ thống</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-server fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <small>Đang hoạt động</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pending Bookings -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-exclamation-triangle text-warning"></i> 
+                            Yêu cầu đang chờ xử lý
+                        </h5>
+                        <a th:href="@{/admin/bookings/pending}" class="btn btn-sm btn-outline-primary">
+                            Xem tất cả <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${#lists.isEmpty(pendingBookings)}" class="text-center py-4">
+                            <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                            <h5 class="text-success">Không có yêu cầu nào đang chờ xử lý</h5>
+                            <p class="text-muted">Tất cả yêu cầu đã được xử lý.</p>
+                        </div>
+                        
+                        <div th:if="${!#lists.isEmpty(pendingBookings)}">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Sinh viên</th>
+                                            <th>Mã SV</th>
+                                            <th>Loại</th>
+                                            <th>Số lượng</th>
+                                            <th>Ngày nhận</th>
+                                            <th>Ngày trả</th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="booking : ${pendingBookings}">
+                                            <td th:text="${booking.studentName}">Tên SV</td>
+                                            <td th:text="${booking.studentCode}">Mã SV</td>
+                                            <td>
+                                                <span th:if="${booking.itemType == 'EQUIPMENT'}" class="badge bg-primary">
+                                                    <i class="fas fa-desktop"></i> Thiết bị
+                                                </span>
+                                                <span th:if="${booking.itemType == 'LAB_ROOM'}" class="badge bg-success">
+                                                    <i class="fas fa-door-open"></i> Phòng Lab
+                                                </span>
+                                            </td>
+                                            <td th:text="${booking.quantity}">1</td>
+                                            <td th:text="${#temporals.format(booking.borrowDate, 'dd/MM/yyyy')}">01/01/2024</td>
+                                            <td th:text="${#temporals.format(booking.returnDate, 'dd/MM/yyyy')}">02/01/2024</td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a th:href="@{/admin/bookings/approve/{id}(id=${booking.id})}" 
+                                                       class="btn btn-sm btn-success"
+                                                       onclick="return confirm('Bạn có chắc muốn phê duyệt yêu cầu này?')">
+                                                        <i class="fas fa-check"></i> Duyệt
+                                                    </a>
+                                                    <a th:href="@{/admin/bookings/reject/{id}(id=${booking.id})}" 
+                                                       class="btn btn-sm btn-danger"
+                                                       onclick="return confirm('Bạn có chắc muốn từ chối yêu cầu này?')">
+                                                        <i class="fas fa-times"></i> Từ chối
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-bolt"></i> Thao tác nhanh</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <a th:href="@{/admin/equipment/add}" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-plus"></i> Thêm thiết bị
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a th:href="@{/admin/lab-rooms/add}" class="btn btn-outline-success w-100">
+                                    <i class="fas fa-plus"></i> Thêm phòng lab
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a th:href="@{/admin/bookings}" class="btn btn-outline-info w-100">
+                                    <i class="fas fa-list"></i> Xem tất cả yêu cầu
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a th:href="@{/student}" class="btn btn-outline-secondary w-100">
+                                    <i class="fas fa-home"></i> Về trang sinh viên
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
